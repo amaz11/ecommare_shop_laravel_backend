@@ -18,7 +18,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('JWTCheck', ['except' => ['login', 'register']]);
     }
 
     public function register(Request $req)
@@ -64,7 +64,7 @@ class AuthController extends Controller
                 return response()->json(['error' => $validator->errors()], 402);
             }
             $credentials = $req->only('email', 'password');
-            if (!$token = JWTAuth::attempt($credentials)) {
+            if (!$token = Auth::attempt($credentials)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Invalid Email or Password',
