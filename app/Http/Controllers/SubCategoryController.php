@@ -13,7 +13,18 @@ class SubCategoryController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $data =  SubCategory::all();
+            return response()->json([
+                'data' => $data,
+                'status' => "ok"
+            ], 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => "error",
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -29,7 +40,19 @@ class SubCategoryController extends Controller
      */
     public function store(StoreSubCategoryRequest $request)
     {
-        //
+        try {
+            $data = SubCategory::create($request->all());
+            return response()->json($data = [
+                'message' => "Insert Succesfully",
+                'data' => $data,
+
+            ], 201);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => "error",
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
     /**
