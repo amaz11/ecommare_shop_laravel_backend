@@ -2,24 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Models\Product;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 
-class CategoryController extends Controller
-
+class ProductController extends Controller
 {
+    // JWT Middleware
+    public function __construct()
+    {
+        $this->middleware(['JWTCheck', "JWTAdmin"]);
+    }
+
     /**
      * Display a listing of the resource.
      */
 
-    //  public function __construct(){
-    //     $this->middleware('JWTCheck');
-    //  }
     public function index()
     {
         try {
-            $data =  Category::with('getSubCategory')->get();
+            $data =  Product::with('subcategory.categorys')->get();
             return response()->json([
                 'data' => $data,
                 'status' => "ok"
@@ -37,15 +39,16 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreProductRequest $request)
     {
         try {
-            $data = Category::create($request->all());
+            $data = Product::create($request->all());
             return response()->json($data = [
                 'message' => "Insert Succesfully",
                 'data' => $data,
@@ -62,10 +65,10 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(Product $product)
     {
         try {
-            $data =  Category::find($category->id);
+            $data = Product::with('subcategory.categorys')->find($product->id);
             if ($data->exists) {
                 return response()->json(['status' => 'ok', 'data' => $data], 200);
             } else {
@@ -82,17 +85,18 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(Product $product)
     {
+        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateProductRequest $request, Product $product)
     {
         try {
-            $data =  Category::find($category->id);
+            $data =  Product::find($product->id);
             if ($data->exists) {
                 $data->update($request->all());
                 return response()->json(['status' => 'ok', 'data' => $data], 200);
@@ -110,11 +114,11 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(Product $product)
     {
-        $data =  Category::find($category->id);
+        $data =  Product::find($product->id);
         if ($data->exists) {
-            $data = category::destroy($category->id);
+            $data = Product::destroy($product->id);
             return  response()->json(['status' => 'Ok', 'message' => 'Deleted Sucessfully'], 204);
         } else {
 

@@ -8,6 +8,11 @@ use App\Http\Requests\UpdateSubCategoryRequest;
 
 class SubCategoryController extends Controller
 {
+    // JWT Middleware
+    //  public function __construct(){
+    //     $this->middleware('JWTCheck');
+    //  }
+
     /**
      * Display a listing of the resource.
      */
@@ -60,7 +65,19 @@ class SubCategoryController extends Controller
      */
     public function show(SubCategory $subCategory)
     {
-        //
+        try {
+            $data = SubCategory::find($subCategory->id);
+            if ($data->exists) {
+                return response()->json(['status' => 'ok', 'data' => $data], 200);
+            } else {
+                return response()->json(['status' => 'error', 'message' => 'Resource not found'], 404);
+            }
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => "error",
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -76,7 +93,20 @@ class SubCategoryController extends Controller
      */
     public function update(UpdateSubCategoryRequest $request, SubCategory $subCategory)
     {
-        //
+        try {
+            $data =  SubCategory::find($subCategory->id);
+            if ($data->exists) {
+                $data->update($request->all());
+                return response()->json(['status' => 'ok', 'data' => $data], 200);
+            } else {
+                return response()->json(['status' => 'error', 'message' => 'Resource not found'], 404);
+            }
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => "error",
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -84,6 +114,13 @@ class SubCategoryController extends Controller
      */
     public function destroy(SubCategory $subCategory)
     {
-        //
+        $data =  SubCategory::find($subCategory->id);
+        if ($data->exists) {
+            $data = SubCategory::destroy($subCategory->id);
+            return  response()->json(['status' => 'Ok', 'message' => 'Deleted Sucessfully'], 204);
+        } else {
+
+            return response()->json(['status' => 'error', 'message' => 'Resource not found'], 404);
+        }
     }
 }
